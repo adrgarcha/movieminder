@@ -1,10 +1,9 @@
 import { ThemedText } from '@/components/ThemedText';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-export default function HomeScreen() {
+export default function MapsScreen() {
    return (
       <SafeAreaView>
-         <ThemedText>Home</ThemedText>
+         <ThemedText>Maps</ThemedText>
       </SafeAreaView>
    );
 }
