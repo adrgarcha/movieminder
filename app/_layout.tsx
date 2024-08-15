@@ -1,37 +1,66 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import '@/global.css';
 
+import { NavTheme } from '@/constants/NavTheme';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Theme, ThemeProvider } from '@react-navigation/native';
+import { SplashScreen, Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect, useState } from 'react';
+import { Platform } from 'react-native';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+const LIGHT_THEME: Theme = {
+   dark: false,
+   colors: NavTheme.light,
+};
+const DARK_THEME: Theme = {
+   dark: true,
+   colors: NavTheme.dark,
+};
+
+export { ErrorBoundary } from 'expo-router';
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+   const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
+   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = useState(false);
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+   useEffect(() => {
+      (async () => {
+         const theme = await AsyncStorage.getItem('theme');
+         if (Platform.OS === 'web') {
+            document.documentElement.classList.add('bg-background');
+         }
+         if (!theme) {
+            AsyncStorage.setItem('theme', colorScheme);
+            setIsColorSchemeLoaded(true);
+            return;
+         }
+         const colorTheme = theme === 'dark' ? 'dark' : 'light';
+         if (colorTheme !== colorScheme) {
+            setColorScheme(colorTheme);
 
-  if (!loaded) {
-    return null;
-  }
+            setIsColorSchemeLoaded(true);
+            return;
+         }
+         setIsColorSchemeLoaded(true);
+      })().finally(() => {
+         SplashScreen.hideAsync();
+      });
+   }, []);
 
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </ThemeProvider>
-  );
+   if (!isColorSchemeLoaded) {
+      return null;
+   }
+
+   return (
+      <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+         <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+         <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+         </Stack>
+      </ThemeProvider>
+   );
 }
