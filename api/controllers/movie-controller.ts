@@ -6,13 +6,14 @@ export class MovieController {
       const { title, category } = req.query;
       const query = Movie.find()
          .where({ poster: { $exists: true } })
-         .limit(10);
+         .limit(30);
 
       if (title) {
          query.where({ title: { $regex: title, $options: 'i' } });
       }
 
       if (category) {
+         query.limit(10);
          switch (category) {
             case 'recent':
                query.sort({ released: -1 });
