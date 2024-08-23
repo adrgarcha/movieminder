@@ -1,6 +1,51 @@
 import { Schema, model } from 'mongoose';
 
-const movieSchema = new Schema({
+export interface IMovie {
+   _id: string;
+   plot?: string;
+   genres?: string[];
+   runtime?: number;
+   cast?: string[];
+   poster?: string;
+   title?: string;
+   fullplot?: string;
+   languages?: string[];
+   released?: Date;
+   directors?: string[];
+   rated?: string;
+   awards?: {
+      wins?: number;
+      nominations?: number;
+      text?: string;
+   };
+   lastupdated?: string;
+   year?: number;
+   imdb?: {
+      rating?: number;
+      votes?: number;
+      id?: number;
+   };
+   countries?: string[];
+   type?: string;
+   tomatoes?: {
+      viewer?: {
+         rating?: number;
+         numReviews?: number;
+         meter?: number;
+      };
+      fresh?: number;
+      critic?: {
+         rating?: number;
+         numReviews?: number;
+         meter?: number;
+      };
+      rotten?: number;
+      lastUpdated?: Date;
+   };
+   num_mflix_comments?: number;
+}
+
+const movieSchema = new Schema<IMovie>({
    plot: String,
    genres: [String],
    runtime: Number,
@@ -44,4 +89,4 @@ const movieSchema = new Schema({
    num_mflix_comments: Number,
 });
 
-export const Movie = model('Movie', movieSchema);
+export const Movie = model<IMovie>('Movie', movieSchema);

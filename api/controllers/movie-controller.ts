@@ -3,7 +3,35 @@ import { Movie } from '../models/Movie';
 
 export class MovieController {
    static async getAll(req: Request, res: Response) {
-      const movies = await Movie.find().limit(10);
+      const { title, category } = req.query;
+      const query = Movie.find()
+         .where({ poster: { $exists: true } })
+         .limit(10);
+
+      if (title) {
+         query.where({ title: { $regex: title, $options: 'i' } });
+      }
+
+      if (category) {
+         switch (category) {
+            case 'recent':
+               query.sort({ released: -1 });
+               break;
+            case 'tomatoes-critic':
+               query.sort({ 'tomatoes.critic.rating': -1 });
+               break;
+            case 'tomatoes-viewer':
+               query.sort({ 'tomatoes.viewer.rating': -1 });
+               break;
+            case 'imdb':
+               query.sort({ 'imdb.rating': -1 }).where({ 'imdb.rating': { $type: 'number' } });
+               break;
+            default:
+               return res.status(400).json({ message: 'Invalid category' });
+         }
+      }
+
+      const movies = await query;
       return res.json(movies);
    }
 
