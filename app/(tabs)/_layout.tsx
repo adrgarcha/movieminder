@@ -1,19 +1,16 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-
-import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { Tabs } from 'expo-router';
 import { Home, Map, Search, User } from 'lucide-react-native';
 
 const STROKE_WIDTH = 1.5;
 
 export default function TabLayout() {
-   const { colorScheme } = useColorScheme();
+   const { isDarkColorScheme } = useColorScheme();
 
    return (
       <Tabs
          screenOptions={{
-            tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+            tabBarActiveTintColor: isDarkColorScheme ? 'white' : 'black',
             headerShown: false,
          }}>
          <Tabs.Screen
