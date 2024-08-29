@@ -21,7 +21,7 @@ export default function CustomRefreshControl() {
       setTimeout(() => {
          setRefreshing(false);
       }, 2000);
-   }, []);
+   }, [setRefreshing]);
 
    return <RefreshControl onRefresh={onRefresh} refreshing={refreshing} />;
 }
