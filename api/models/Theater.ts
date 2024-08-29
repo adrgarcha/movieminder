@@ -1,6 +1,22 @@
 import { Schema, model } from 'mongoose';
 
-const theaterSchema = new Schema({
+export interface ITheater {
+   theaterId: number;
+   location: {
+      address: {
+         street1: string;
+         city: string;
+         state: string;
+         zipcode: string;
+      };
+      geo: {
+         type: string;
+         coordinates: number[];
+      };
+   };
+}
+
+const theaterSchema = new Schema<ITheater>({
    theaterId: Number,
    location: {
       address: {
@@ -10,10 +26,10 @@ const theaterSchema = new Schema({
          zipcode: String,
       },
       geo: {
-         type: String,
+         type: { type: String },
          coordinates: [Number],
       },
    },
 });
 
-export const Theater = model('Theater', theaterSchema);
+export const Theater = model<ITheater>('Theater', theaterSchema);
