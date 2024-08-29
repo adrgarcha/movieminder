@@ -1,5 +1,6 @@
 import { IMovie } from '@/api/models/Movie';
 import { useRefreshStore } from '@/components/CustomRefreshControl';
+import { API_URL } from '@/constants/ApiUrl';
 import { useEffect, useState } from 'react';
 
 export default function useGetAllMovies({ queryParams }: { queryParams?: string }) {
@@ -7,13 +8,10 @@ export default function useGetAllMovies({ queryParams }: { queryParams?: string 
    const refreshing = useRefreshStore(state => state.refreshing);
 
    useEffect(() => {
-      async function getAllMovies() {
-         const response = await fetch(`http://192.168.1.138:3000/movies${queryParams ? `?${queryParams}` : ''}`);
-         const data = await response.json();
-         setMovies(data);
-      }
-
-      getAllMovies();
+      fetch(`${API_URL}/movies${queryParams ? `?${queryParams}` : ''}`)
+         .then(response => response.json())
+         .then(setMovies)
+         .catch(console.error);
    }, [queryParams, refreshing]);
 
    return { movies };
