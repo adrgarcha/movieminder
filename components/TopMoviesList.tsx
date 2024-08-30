@@ -1,6 +1,6 @@
 import useGetAllMovies from '@/hooks/useGetAllMovies';
-import { Link } from 'expo-router';
-import { FlatList, Image } from 'react-native';
+import { FlatList } from 'react-native';
+import MoviePoster from './MoviePoster';
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
 
@@ -11,11 +11,7 @@ export default function TopMoviesList({ title, category }: { title: string; cate
          <ThemedText className="pb-1 font-bold">{title}</ThemedText>
          <FlatList
             data={movies}
-            renderItem={({ item }) => (
-               <Link href="/(tabs)/">
-                  <Image source={{ uri: item.poster }} className="w-[125] h-[175]" />
-               </Link>
-            )}
+            renderItem={({ item }) => <MoviePoster item={item} width={125} height={175} />}
             keyExtractor={movie => movie._id}
             ItemSeparatorComponent={() => <ThemedView className="w-2" />}
             horizontal

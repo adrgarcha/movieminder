@@ -1,13 +1,12 @@
-import splash from '@/assets/images/splash.png';
 import useGetAllMovies from '@/hooks/useGetAllMovies';
-import { Link } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { FlatList, Image, useWindowDimensions } from 'react-native';
+import { FlatList, useWindowDimensions } from 'react-native';
+import MoviePoster from './MoviePoster';
 
 export default function MoviesList({ title }: { title: string }) {
    const { movies } = useGetAllMovies({ queryParams: `title=${title}` });
-   const [refreshing, setRefreshing] = useState(false);
    const { width } = useWindowDimensions();
+   const [refreshing, setRefreshing] = useState(false);
 
    const onRefresh = useCallback(() => {
       setRefreshing(true);
@@ -19,11 +18,7 @@ export default function MoviesList({ title }: { title: string }) {
    return (
       <FlatList
          data={movies}
-         renderItem={({ item }) => (
-            <Link href="/(tabs)/explore">
-               <Image source={{ uri: item.poster }} defaultSource={splash} width={width / 3} height={200} />
-            </Link>
-         )}
+         renderItem={({ item }) => <MoviePoster item={item} width={width / 3} height={200} />}
          keyExtractor={movie => movie._id}
          refreshing={refreshing}
          onRefresh={onRefresh}
